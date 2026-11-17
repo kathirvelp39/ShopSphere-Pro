@@ -268,21 +268,311 @@ API testing and further improvements are ongoing.
 **ShopSphere Pro – E-Commerce Platform Backend**
 
 
-## Day 02 – Modules 11 to 20
+# ShopSphere Pro – Day 02
+## Advanced E-Commerce Backend Modules (11–20)
 
-Implemented in `app/routers/day02.py` with SQLAlchemy models in `app/models/day02.py`:
-- Product attributes and product attribute values
-- Product price updates and price history
-- Inventory records, adjustments, and movement history
-- Warehouse management and warehouse stock views
-- Stock transfer request, dispatch, and receipt workflow
-- Low-stock thresholds and report
-- Customer shopping cart
-- Cart subtotal, coupon discount, tax, shipping, and total calculation
-- Customer wishlist
-- Coupon creation, activation, and validation
+Day 02 focuses on advanced e-commerce functionalities, including product attributes, pricing, inventory, warehouses, shopping carts, wishlists, and coupons.
 
-Day 02 routes use the existing `/api/v1` prefix. Create new tables by running:
-`python -m app.db.init_db`
+The backend is developed using **FastAPI, Python, SQLAlchemy, Pydantic, and MySQL**.
 
-**Important:** This code uses the project's existing `Base.metadata.create_all` initialization. Alembic migrations and automated integration tests remain additional work before production deployment.
+---
+
+## Module 11 – Product Attribute Management
+
+### Purpose
+Product attributes help customers understand the specifications and characteristics of a product.
+
+### What it does
+- Creates product attributes such as Size, Color, Material, and Weight.
+- Assigns attribute values to individual products.
+- Retrieves product-specific attributes.
+- Removes attributes from products.
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/v1/attributes` | Create a product attribute |
+| GET | `/api/v1/attributes` | Retrieve attributes |
+| POST | `/api/v1/products/{product_id}/attributes` | Assign attributes to a product |
+| GET | `/api/v1/products/{product_id}/attributes` | Get product attributes |
+| DELETE | `/api/v1/products/{product_id}/attributes/{attribute_id}` | Remove a product attribute |
+
+### Working Explanation
+The system stores attribute definitions separately and connects their values to products. This allows different products to have different specifications without creating separate database columns for every possible attribute.
+
+---
+
+## Module 12 – Product Pricing Management
+
+### Purpose
+Manages product prices and maintains a history of price changes.
+
+### What it does
+- Maintains base product prices.
+- Supports sale price updates.
+- Tracks previous and updated prices.
+- Provides product price history.
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| PATCH | `/api/v1/products/{product_id}/price` | Update product price |
+| GET | `/api/v1/products/{product_id}/price-history` | Retrieve price history |
+
+### Working Explanation
+Whenever a product price is updated, the system can maintain a record of the previous and new prices. This helps administrators track pricing changes over time.
+
+---
+
+## Module 13 – Inventory Management
+
+### Purpose
+Tracks product stock quantities and inventory movements.
+
+### What it does
+- Creates inventory records.
+- Tracks available and reserved stock.
+- Adjusts stock quantities.
+- Records inventory movements.
+- Retrieves inventory movement history.
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/v1/inventory` | Create inventory |
+| GET | `/api/v1/inventory` | Retrieve inventory |
+| POST | `/api/v1/inventory/{inventory_id}/adjust` | Adjust stock quantity |
+| GET | `/api/v1/inventory/{inventory_id}/movements` | View stock movement history |
+
+### Working Explanation
+Inventory management helps the business monitor product stock levels. Stock adjustments and movement records provide a history of inventory changes.
+
+---
+
+## Module 14 – Warehouse Management
+
+### Purpose
+Manages warehouse information and warehouse-related inventory.
+
+### What it does
+- Creates warehouse records.
+- Retrieves warehouse information.
+- Activates or deactivates warehouses.
+- Displays inventory stored in a particular warehouse.
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/v1/warehouses` | Create a warehouse |
+| GET | `/api/v1/warehouses` | Retrieve warehouses |
+| PATCH | `/api/v1/warehouses/{warehouse_id}/status` | Update warehouse status |
+| GET | `/api/v1/warehouses/{warehouse_id}/inventory` | View warehouse inventory |
+
+### Working Explanation
+The system organizes inventory based on warehouse locations. This helps administrators understand where products are stored and manage warehouse availability.
+
+---
+
+## Module 15 – Inventory Transfer Management
+
+### Purpose
+Transfers stock between warehouses.
+
+### What it does
+- Creates inventory transfer requests.
+- Dispatches stock from a source warehouse.
+- Receives stock at a destination warehouse.
+- Retrieves transfer details.
+- Tracks the transfer process.
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/v1/inventory-transfers` | Create an inventory transfer |
+| POST | `/api/v1/inventory-transfers/{transfer_id}/dispatch` | Dispatch inventory |
+| POST | `/api/v1/inventory-transfers/{transfer_id}/receive` | Receive inventory |
+| GET | `/api/v1/inventory-transfers/{transfer_id}` | Retrieve transfer details |
+
+### Working Explanation
+Inventory transfers help move products between warehouses. The transfer process separates dispatch and receiving operations so that stock movement can be tracked.
+
+---
+
+## Module 16 – Low-Stock Management
+
+### Purpose
+Identifies products that have reached or fallen below their configured stock threshold.
+
+### What it does
+- Configures low-stock thresholds.
+- Updates inventory alert thresholds.
+- Retrieves products with low stock.
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| PATCH | `/api/v1/inventory/{inventory_id}/low-stock-threshold` | Update low-stock threshold |
+| GET | `/api/v1/inventory/low-stock` | Retrieve low-stock inventory |
+
+### Working Explanation
+Each inventory record can have a minimum stock threshold. The low-stock endpoint helps administrators identify inventory that may need replenishment.
+
+---
+
+## Module 17 – Shopping Cart Management
+
+### Purpose
+Allows customers to manage products they intend to purchase.
+
+### What it does
+- Creates or retrieves a shopping cart.
+- Adds products to the cart.
+- Retrieves cart items.
+- Updates item quantities.
+- Removes individual cart items.
+- Clears the shopping cart.
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/v1/cart` | Create or access cart |
+| GET | `/api/v1/cart` | Retrieve cart |
+| DELETE | `/api/v1/cart` | Clear cart |
+| POST | `/api/v1/cart/items` | Add an item |
+| PATCH | `/api/v1/cart/items/{item_id}` | Update cart item |
+| DELETE | `/api/v1/cart/items/{item_id}` | Remove cart item |
+
+### Working Explanation
+The shopping cart stores products selected by a customer before checkout. Customers can add products, change quantities, and remove unwanted items.
+
+---
+
+## Module 18 – Cart Price Calculation
+
+### Purpose
+Calculates the price summary of the products in a shopping cart.
+
+### What it does
+- Calculates the cart subtotal.
+- Provides a price summary.
+- Helps customers review the cart value before checkout.
+
+### API Endpoint
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/v1/cart/price-summary` | Calculate cart price summary |
+
+### Working Explanation
+The price summary provides a consolidated view of the cart value based on its items. It helps customers understand the amount associated with their selected products before proceeding.
+
+---
+
+## Module 19 – Wishlist Management
+
+### Purpose
+Allows customers to save products they may want to purchase later.
+
+### What it does
+- Adds products to a wishlist.
+- Retrieves wishlist products.
+- Removes products from a wishlist.
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/v1/wishlist/{product_id}` | Add product to wishlist |
+| GET | `/api/v1/wishlist` | Retrieve wishlist |
+| DELETE | `/api/v1/wishlist/{product_id}` | Remove product from wishlist |
+
+### Working Explanation
+A wishlist stores products separately from the shopping cart. Customers can save interesting products without immediately adding them to their cart.
+
+---
+
+## Module 20 – Coupon Management
+
+### Purpose
+Manages discount coupons and validates coupon codes.
+
+### What it does
+- Creates discount coupons.
+- Retrieves available coupons.
+- Activates or deactivates coupons.
+- Validates coupon codes.
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/v1/coupons` | Create a coupon |
+| GET | `/api/v1/coupons` | Retrieve coupons |
+| PATCH | `/api/v1/coupons/{coupon_id}/status` | Update coupon status |
+| POST | `/api/v1/coupons/validate` | Validate a coupon code |
+
+### Working Explanation
+Coupon management allows administrators to maintain discount codes. Customers can submit a coupon code for validation before using it during a purchase.
+
+---
+
+## Day 02 – Technical Implementation
+
+The Day 02 modules extend the existing ShopSphere Pro backend with:
+
+- SQLAlchemy database models.
+- Pydantic request and response schemas.
+- FastAPI API routers.
+- MySQL database integration.
+- Inventory and product-related data management.
+- API documentation through Swagger UI.
+- Authentication and authorization integration.
+
+## Database Tables
+
+The Day 02 implementation includes tables for:
+
+- Product Attributes and Attribute Values
+- Product Price History
+- Inventory and Inventory Movements
+- Warehouses
+- Stock Transfers and Transfer Items
+- Shopping Carts and Cart Items
+- Wishlists and Wishlist Items
+- Coupons
+
+## API Documentation
+
+Start the FastAPI application:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Open Swagger UI:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+## Project Progress
+
+| Development Day | Modules | Description |
+|---|---|---|
+| Day 01 | 1–10 | Authentication, Users, Categories, Brands, Products and Variants |
+| Day 02 | 11–20 | Attributes, Pricing, Inventory, Warehouses, Cart, Wishlist and Coupons |
+
+**Project:** ShopSphere Pro  
+**Development:** Backend Only  
+**Framework:** FastAPI  
+**Database:** MySQL  
+**ORM:** SQLAlchemy  
+**Validation:** Pydantic  
+**API Testing:** Swagger UI / Postman
