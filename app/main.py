@@ -7,6 +7,7 @@ from app.routers.users import router as users_router
 from app.routers.customers import router as customers_router
 from app.routers.addresses import router as addresses_router
 from app.routers.catalog import router as catalog_router
+from app.routers.day02 import router as day02_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -21,6 +22,7 @@ app.include_router(users_router, prefix=API_PREFIX)
 app.include_router(customers_router, prefix=API_PREFIX)
 app.include_router(addresses_router, prefix=API_PREFIX)
 app.include_router(catalog_router, prefix=API_PREFIX)
+app.include_router(day02_router, prefix=API_PREFIX)
 
 
 @app.get("/", tags=["Health"])

@@ -266,3 +266,23 @@ API testing and further improvements are ongoing.
 ---
 
 **ShopSphere Pro – E-Commerce Platform Backend**
+
+
+## Day 02 – Modules 11 to 20
+
+Implemented in `app/routers/day02.py` with SQLAlchemy models in `app/models/day02.py`:
+- Product attributes and product attribute values
+- Product price updates and price history
+- Inventory records, adjustments, and movement history
+- Warehouse management and warehouse stock views
+- Stock transfer request, dispatch, and receipt workflow
+- Low-stock thresholds and report
+- Customer shopping cart
+- Cart subtotal, coupon discount, tax, shipping, and total calculation
+- Customer wishlist
+- Coupon creation, activation, and validation
+
+Day 02 routes use the existing `/api/v1` prefix. Create new tables by running:
+`python -m app.db.init_db`
+
+**Important:** This code uses the project's existing `Base.metadata.create_all` initialization. Alembic migrations and automated integration tests remain additional work before production deployment.

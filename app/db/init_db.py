@@ -2,6 +2,9 @@ from app.db.database import Base, engine
 from app.models import (
     User, TokenSession, CustomerProfile, ProfileHistory,
     Address, Category, Brand, Product, ProductVariant, ProductMedia,
+    ProductAttribute, ProductAttributeValue, ProductPriceHistory, Warehouse,
+    Inventory, InventoryMovement, StockTransfer, StockTransferItem,
+    ShoppingCart, CartItem, Wishlist, WishlistItem, Coupon,
 )
 
 

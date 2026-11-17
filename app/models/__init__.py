@@ -23,3 +23,14 @@ __all__ = [
     "ProductVariant",
     "ProductMedia",
 ]
+from app.models.day02 import (
+    ProductAttribute, ProductAttributeValue, ProductPriceHistory, Warehouse,
+    Inventory, InventoryMovement, StockTransfer, StockTransferItem,
+    ShoppingCart, CartItem, Wishlist, WishlistItem, Coupon,
+)
+
+__all__ += [
+    "ProductAttribute", "ProductAttributeValue", "ProductPriceHistory", "Warehouse",
+    "Inventory", "InventoryMovement", "StockTransfer", "StockTransferItem",
+    "ShoppingCart", "CartItem", "Wishlist", "WishlistItem", "Coupon",
+]
